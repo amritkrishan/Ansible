@@ -1,0 +1,19 @@
+---
+  - name: get ansible base path from current role_path
+    command: echo {{ role_path }}
+  - name: Copy ToDoList
+    copy: src={{role_path}}/files/ToDoList dest=/home/ubuntu/ directory_mode=yes
+  # - name: delete default virtualhost
+  #   file: path=/etc/nginx/sites-enabled/default state=absent
+  # - name: server name  
+  #   lineinfile: path=/etc/nginx/sites-available/todolist
+  #               state=present
+  #               regexp='^server_name'
+  #               line='server_name 127.0.0.1;'
+  # - name: add mysite site-available
+  #   copy: src={{role_path}}/files/todolist dest=/etc/nginx/sites-available
+  - name: Add todolist config template to the Nginx available sites
+    template: src={{role_path}}/templates/todolist.conf dest=/etc/nginx/sites-available/todolist 
+  - name: link mysite site-enabled
+    file: src=/etc/nginx/sites-available/todolist dest=/etc/nginx/sites-enabled/todolist state=link
+    notify: restart nginx

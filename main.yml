@@ -1,0 +1,7 @@
+---
+
+- include: installpackages.yml
+- include: copyproject.yml
+- include: ec2facts.yml
+- include: firewall.yml
+- include: usermanagement.yml

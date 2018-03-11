@@ -1,0 +1,23 @@
+---
+- hosts: stage
+  become: true
+  vars:
+     package: vim
+     epic: true
+     foo: hello
+  tasks:
+     - name: Install Package
+       apt: name={{ package }} state=latest
+     - name: Echo List
+       command: echo {{ item }}
+       with_items: [ 0, 2, 4, 6, 8, 10 ]
+       when: item > 5
+     - name: Echo Epic
+       shell: echo "This certainly is epic!"
+       when: epic
+     - name: Echo Foo
+       shell: echo "I've got '{{ foo }}' and am not afraid to use it!"
+       when: foo is defined
+     - name: Echo Fail
+       fail: msg="Bailing out. this play requires 'bar'"
+       when: bar is undefined

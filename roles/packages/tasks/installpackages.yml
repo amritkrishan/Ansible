@@ -1,0 +1,14 @@
+--- 
+  - name: Update Apt Cache
+    apt: update_cache=yes  
+  - name: "Install List of Packages"
+    apt: name={{item}} state=latest
+    with_items:
+       - openjdk-7-jre
+       - openjdk-7-jdk
+       - nginx
+       - python-setuptools
+       - python-dev
+       - build-essential
+       - python-pip
+       - git

@@ -1,0 +1,47 @@
+---
+  - name: Add deployer user and add it to sudo
+    user: name="{{ item }}"
+          state=present
+          createhome=yes
+          comment="Deploy User"
+          groups="sudo"
+          password=no
+          shell=/bin/bash
+    with_items:
+    - "{{ users }}"
+
+  - name: Create directory
+    file: path="/home/{{ item }}/.ssh" state=directory
+    with_items:
+    - "{{ users }}"
+
+  - name: Simple GET operation
+    aws_s3: bucket=ansiblekeysbucket object="/UserKeys/{{ item }}" dest="/home/{{ item }}/.ssh/authorized_keys" mode=get aws_access_key='{{ec2_access_key}}' aws_secret_key='{{ec2_secret_key}}'
+    with_items:
+    - "{{ users }}"
+
+  # - name: Fetch keys from git
+  #   git: repo=https://github.com/amritkrishan/Users.git
+  #        version=master  
+  #        dest=/home/ubuntu/Users
+
+  # - name: Placing key
+  #   authorized_key: user=amrit key="{{ lookup('file', '/home/ubuntu/Users/amrit') }}"
+
+  # - name: Disallow root SSH access
+  #   lineinfile: dest=/etc/ssh/sshd_config
+  #               regexp="^PermitRootLogin"
+  #               line="PermitRootLogin no"
+  #               state=present
+  #   notify: restart ssh
+
+  - name: Remove deployer user
+    user: name="{{ item }}"
+          state=absent
+    with_items:
+    - "{{ users }}"
+
+  - name: Remove deployer home dir
+    file: path="/home/{{ item }}" state=absent
+    with_items:
+    - "{{ users }}"
